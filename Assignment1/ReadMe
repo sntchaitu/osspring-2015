@@ -1,0 +1,17 @@
+Assignment Description
+
+In the standard solution with one producer and one consumer, you will need at least three semaphores named:
+a) Full – to stop the producer from producing items when the buffer is full. (initial value n= buffer size)
+b) Empty – to stop the consumer from consuming items from the buffer when the buffer is empty (initial value zero)
+c) Mutex – to allow only one process in the critical section (initial value one)
+
+In this variant of the producer/consumer, there will be one producer (P), two Consumers (C1, C2) and one buffer; the size of the buffer is 5.
+The producer will produce 100 items and stop running.  
+The consumers will consume items from the buffer, and the consumer that consume the last item, say Ci, must inform the other consumer, say Cj, that the last item has been consumed and stop running. When Cj receives the information that the last item has been consumed, it will stop running. 
+Note: All processes must run (stop) to completion properly.  
+
+A variable named counter can be used to control the number of items to be consumed. The producer can initially set up counter to 100 and the consumers can decrement counter by one each time an item is consumed. Do not forget that counter is a shared variable and a semaphore is needed to guarantee mutual exclusion on the counter shared variable.
+
+
+
+

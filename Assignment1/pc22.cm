@@ -1,0 +1,135 @@
+int Counter,pItems=0,cItems=0,last=10;
+int Buffer[5],i=0;
+semaphore full,empty1;
+binarysem mutex,mutex_consumer,start;
+
+void producer()
+{
+    while(1)
+    {
+	if(pItems==0)
+	{
+		Counter=100;
+	}
+        if(pItems == 100)
+        {
+            break;
+        }
+        p(full);
+        p(mutex);
+        pItems++;
+	cout<<" Item"<<pItems<<"Produced"<<endl;
+        v(mutex);
+        v(empty1);
+    }
+}
+
+
+void consumerC1()
+{
+      while(1)
+    {
+        
+        if(Counter != 0)
+	{
+		if(last<=0)
+		{
+			break;			
+		}
+           	p(empty1);
+		if(last<=0)
+		{
+			v(empty1);
+			break;			
+		}
+          	p(mutex);
+           		Counter--;
+	   		last=Counter;
+			if(last>=0)
+			{
+	   			cItems++;
+          			cout<<"Item"<<cItems<<"consumed by C1"<<endl;
+			}
+			if(last<=0)
+			{
+				v(empty1);
+				v(mutex);
+           			v(full);
+				break;
+	
+			}
+           	v(mutex);
+           	v(full);
+        }
+	else if(last<=0)
+	{
+		v(empty1);
+		break;			
+	}
+	
+     }
+}
+
+void consumerC2()
+{
+      while(1)
+    {
+        
+        if(Counter != 0)
+	{
+		if(last<=0)
+		{
+			break;			
+		}
+           	p(empty1);
+		if(last<=0)
+		{
+			v(empty1);
+			break;			
+		}
+          	p(mutex);
+           		Counter--;
+	   		last=Counter;
+			if(last>=0)
+			{
+	   			cItems++;
+          			cout<<"Item"<<cItems<<"consumed by C2"<<endl;
+			}
+			if(last<=0)
+			{
+				v(empty1);
+				v(mutex);
+           			v(full);
+				break;
+	
+			}
+           	v(mutex);
+           	v(full);
+        }
+	else if(last<=0)
+	{
+		v(empty1);
+		break;			
+	}
+	
+     }
+}
+
+
+
+main()
+{
+    initialsem(full,100);
+    initialsem(empty1,0);
+    initialsem(mutex,1);
+    initialsem(mutex_consumer,1);
+    initialsem(start,0);
+    cobegin
+    {
+        producer();
+        consumerC1(); 
+	//delay(30000);
+        consumerC2();   
+    }
+
+}
