@@ -1,0 +1,128 @@
+//Producer consumer Program implementation injava
+
+/* package whatever; // don't place package name! */
+
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+/* Name of the class has to be "Main" only if the class is public. */
+
+
+ class Producer extends Thread
+{
+	private ArrayList<Integer> sq ;
+	private int max = 2;
+	public Producer(ArrayList <Integer> temp)
+	{
+		this.sq = temp;
+	}
+	
+	public void run()
+	{
+		for(int i =0;i<10;i++)
+		{
+			try
+			{
+				produce(i);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	public void produce(int i) throws Exception
+	{
+		System.out.println("here1");
+		synchronized (sq)
+		{
+			System.out.println("here2");
+			if(sq.size()==max)
+			{
+				System.out.println("here3");
+				System.out.println("P is Watining for consumer to consume");
+				sq.wait();
+			}
+			
+		}
+		
+		synchronized (sq)
+		{
+			System.out.println("here4");
+			System.out.println("produced"+i);
+			sq.add(i);
+			//Thread.sleep((long)Math.random()*10);
+			sq.notify();
+		}
+	}
+	
+	
+}
+
+
+ class Consumer extends Thread
+{
+	private ArrayList<Integer> sq ;
+	private int max = 2;
+	public Consumer(ArrayList <Integer> temp)
+	{
+		this.sq = temp;
+	}
+	
+	public void run()
+	{
+		for(int i =0;i<10;i++)
+		{
+			try
+			{
+				consume();
+				//Thread.sleep(100);
+			}
+			catch(Exception  e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	public void consume() throws Exception
+	{
+		synchronized (sq)
+		{
+			if(sq.size()==0)
+			{
+				System.out.println("Q is waiting for producer to produce");
+				sq.wait();
+			}
+			
+		}
+		
+		synchronized (sq)
+		{
+			System.out.println("consumed"+sq.remove(0));
+			
+			//Thread.sleep((long)Math.random()*1000);
+			sq.notify();
+		}
+	}
+	
+	
+}
+
+
+
+class Ideone
+{
+	public static void main (String[] args) throws java.lang.Exception
+	{
+		// your code goes here
+		ArrayList<Integer> sq = new ArrayList<Integer>();
+		Producer p = new Producer(sq);
+		Consumer c = new Consumer(sq);
+		
+		Thread pThread = new Thread(p,"producer");
+		Thread cThread = new Thread(c,"consumer");
+		pThread.start();
+		cThread.start();
+	}
+}
